@@ -13,7 +13,7 @@ import (
 )
 
 func InitVault() vault.Client {
-	token, err := readTokenFromConfig()
+	token, err := ReadTokenFromConfig()
 	if err != nil {
 		log.Fatalln("Pangea token does not exist")
 	}
@@ -30,7 +30,7 @@ const configFilePath = "~/.pangea/config"
 
 // ReadTokenFromConfig reads the token from the ~/.pangea/config file.
 // If the file or folder doesn't exist, it returns an error.
-func readTokenFromConfig() (string, error) {
+func ReadTokenFromConfig() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err

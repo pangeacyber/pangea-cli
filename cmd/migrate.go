@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/go-resty/resty/v2"
+	"github.com/pangeacyber/cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -41,11 +43,34 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 
+		client := resty.New()
+
+		token, err := utils.ReadTokenFromConfig()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println("Migrating Secrets 🪄...")
+
+		client.SetAuthToken(token)
+
+		// TODO: Make the folder dynamically read from cache_path.
+		folderName := "/secrets/fun-project/dev/"
+
 		// Loop through variables from the .env file
 		settings := viper.AllSettings()
 		for key, value := range settings {
-			fmt.Printf("Variable: %s, Value: %v\n", key, value)
+			_, err := client.R().
+				SetHeader("Content-Type", "application/json").
+				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, key, value, "")).
+				Post("https://vault.aws.us.pangea.cloud/v1/secret/store")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
+
+		fmt.Printf("Success! All secrets have been migrated to %s in your secure Pangea Vault", folderName)
+		fmt.Println("You can now delete your env file and run `pangea run -c $APP_COMMAND`")
 	},
 }
 
