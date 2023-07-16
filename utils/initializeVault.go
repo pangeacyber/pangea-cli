@@ -8,29 +8,25 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pangeacyber/pangea-go/pangea-sdk/v2/pangea"
-	"github.com/pangeacyber/pangea-go/pangea-sdk/v2/service/vault"
+	"github.com/go-resty/resty/v2"
 )
 
-func InitVault() vault.Client {
-	token, err := ReadTokenFromConfig()
+func CreateVaultAPIClient() *resty.Client {
+	token, err := readTokenFromConfig()
 	if err != nil {
-		log.Fatalln("Pangea token does not exist")
+		log.Fatalln(err)
 	}
 
-	vaultcli := vault.New(&pangea.Config{
-		Token:  token,
-		Domain: os.Getenv("PANGEA_DOMAIN"),
-	})
+	client := resty.New()
+	client.SetAuthToken(token)
+	client.SetHeader("Content-Type", "application/json")
 
-	return vaultcli
+	return client
 }
-
-const configFilePath = "~/.pangea/config"
 
 // ReadTokenFromConfig reads the token from the ~/.pangea/config file.
 // If the file or folder doesn't exist, it returns an error.
-func ReadTokenFromConfig() (string, error) {
+func readTokenFromConfig() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err

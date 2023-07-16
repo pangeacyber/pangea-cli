@@ -8,8 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/go-resty/resty/v2"
-	"github.com/pangeacyber/cli/utils"
+	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -43,26 +42,18 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 
-		client := resty.New()
-
-		token, err := utils.ReadTokenFromConfig()
-		if err != nil {
-			log.Fatal(err)
-		}
+		client := utils.CreateVaultAPIClient()
 
 		fmt.Println("Migrating Secrets 🪄...")
 
-		client.SetAuthToken(token)
-
 		// TODO: Make the folder dynamically read from cache_path.
-		folderName := "/secrets/fun-project/dev/"
+		folderName := "/secrets/bryan/dev/"
 
 		// Loop through variables from the .env file
 		settings := viper.AllSettings()
 		for key, value := range settings {
 			_, err := client.R().
-				SetHeader("Content-Type", "application/json").
-				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, key, value, "")).
+				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, key, value, folderName)).
 				Post("https://vault.aws.us.pangea.cloud/v1/secret/store")
 			if err != nil {
 				log.Fatal(err)
@@ -77,6 +68,6 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(migrateCmd)
 
-	migrateCmd.Flags().StringP("file", "f", ".env", "env file name (Ex. .env, .env.local)")
+	migrateCmd.Flags().StringP("file", "f", ".env", "env file path (Ex. .env, .env.local)")
 
 }

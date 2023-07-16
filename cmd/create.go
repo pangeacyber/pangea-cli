@@ -4,11 +4,10 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"context"
 	"fmt"
+	"log"
 
-	"github.com/pangeacyber/cli/utils"
-	"github.com/pangeacyber/pangea-go/pangea-sdk/v2/service/vault"
+	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -70,35 +69,33 @@ func validateInput(flags *pflag.FlagSet) error {
 			return fmt.Errorf("invalid input. Only 'y' or 'n' are allowed")
 		}
 
-		vaultcli := utils.InitVault()
-
-		ctx := context.Background()
+		client := utils.CreateVaultAPIClient()
 
 		if confirm == "y" {
 
 			envs := []string{"dev", "stg", "prd"}
 
 			for _, env := range envs {
-				input := &vault.FolderCreateRequest{
-					Name:   env,
-					Folder: fmt.Sprintf("secrets/%s/", projectName),
-				}
 
-				_, err := vaultcli.FolderCreate(ctx, input)
+				_, err := client.R().
+					SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, env, fmt.Sprintf("secrets/%s/", projectName))).
+					Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
 				if err != nil {
-					return err
+					log.Fatalln(err)
 				}
 			}
+
+			fmt.Printf("Created dev, stg, and prd environments at %s in your Pangea Vault", fmt.Sprintf("/secrets/%s/", projectName))
 		} else {
-			input := &vault.FolderCreateRequest{
-				Name:   "default",
-				Folder: fmt.Sprintf("secrets/%s/", projectName),
+			_, err := client.R().
+				SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, "default", fmt.Sprintf("secrets/%s/", projectName))).
+				Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
+
+			if err != nil {
+				log.Fatalln(err)
 			}
 
-			_, err := vaultcli.FolderCreate(ctx, input)
-			if err != nil {
-				return err
-			}
+			fmt.Printf("Created a default environment at %s in your Pangea Vault", fmt.Sprintf("/secrets/%s/", projectName))
 		}
 	}
 

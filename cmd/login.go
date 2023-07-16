@@ -11,7 +11,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/pangeacyber/cli/utils"
+	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
 )
 
