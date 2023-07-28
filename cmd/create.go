@@ -45,8 +45,6 @@ func validateInput(flags *pflag.FlagSet) error {
 		return err
 	}
 
-	fmt.Println(shouldCreateEnvironments)
-
 	projectName, err := flags.GetString("project-name")
 
 	if projectName == "" {

@@ -38,8 +38,8 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		cachePath := getCachePath()
-		config := loadCacheData(cachePath)
+		cachePath := GetCachePath()
+		config := LoadCacheData(cachePath)
 
 		config.Paths[currentDir] = ProjectData{
 			Remote: "/secrets/" + projectName,
@@ -58,7 +58,7 @@ func promptUser(promptMessage string) string {
 	return input
 }
 
-func getCachePath() string {
+func GetCachePath() string {
 	homeDir, _ := os.UserHomeDir()
 	return filepath.Join(homeDir, ".pangea", "cache_paths.json")
 }
@@ -68,7 +68,7 @@ func fileExists(filePath string) bool {
 	return err == nil
 }
 
-func loadCacheData(cachePath string) CacheData {
+func LoadCacheData(cachePath string) CacheData {
 	viper.SetConfigFile(cachePath)
 	viper.SetConfigType("json")
 	viper.SetDefault("paths", make(map[string]ProjectData))
