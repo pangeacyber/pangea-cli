@@ -4,14 +4,53 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
 )
+
+type VaultListResponse struct {
+	RequestID    string `json:"request_id"`
+	RequestTime  string `json:"request_time"`
+	ResponseTime string `json:"response_time"`
+	Status       string `json:"status"`
+	Summary      string `json:"summary"`
+	Result       struct {
+		Count int `json:"count"`
+		Items []struct {
+			Type string `json:"type"`
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"items"`
+	} `json:"result"`
+}
+
+type VaultSecretResponse struct {
+	RequestID    string    `json:"request_id"`
+	RequestTime  time.Time `json:"request_time"`
+	ResponseTime time.Time `json:"response_time"`
+	Status       string    `json:"status"`
+	Summary      string    `json:"summary"`
+	Result       struct {
+		CurrentVersion struct {
+			CreatedAt time.Time `json:"created_at"`
+			Secret    string    `json:"secret"`
+			State     string    `json:"state"`
+			Version   int       `json:"version"`
+		} `json:"current_version"`
+		ID        string     `json:"id"`
+		ItemState string     `json:"item_state"`
+		Type      string     `json:"type"`
+		Versions  []struct{} `json:"versions"`
+	} `json:"result"`
+}
 
 var command []string
 
@@ -37,7 +76,7 @@ var runCmd = &cobra.Command{
 	},
 }
 
-func get_env() {
+func get_env() []string {
 	cachePath := GetCachePath()
 	config := LoadCacheData(cachePath)
 
@@ -46,26 +85,65 @@ func get_env() {
 		log.Fatal("Error reading current directory path")
 	}
 
+	currentDir = strings.ToLower(currentDir)
+
+	fmt.Println(config.Paths[currentDir].Remote)
+	var remoteEnv []string
+
 	if _, isPathExists := config.Paths[currentDir]; isPathExists {
 		client := utils.CreateVaultAPIClient()
 
-		_, err := client.R().
-			// SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, env, fmt.Sprintf("secrets/%s/", projectName))).
-			Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
+		resp, err := client.R().
+			SetBody(fmt.Sprintf(`{"filter": {"folder":"%s"}}`, config.Paths[currentDir].Remote)).
+			Post("https://vault.aws.us.pangea.cloud/v1/list")
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+		var response VaultListResponse
+		err = json.Unmarshal(resp.Body(), &response)
+		if err != nil {
+			log.Fatal("Error fetching secrets from Pangea")
+		}
+
+		// Create a list of secret type IDs
+		secretIDs := make(map[string]interface{})
+		for _, item := range response.Result.Items {
+			if item.Type == "secret" {
+				secretIDs[item.ID] = item.Name
+			}
+		}
+
+		// Print the list of secret type IDs
+		for key, val := range secretIDs {
+			resp, err := client.R().
+				SetBody(fmt.Sprintf(`{"id": "%s"}`, key)).
+				Post("https://vault.aws.us.pangea.cloud/v1/get")
+
+			if err != nil {
+				log.Fatal("Error fetching secret ", val)
+			}
+
+			var response VaultSecretResponse
+			err = json.Unmarshal(resp.Body(), &response)
+
+			remoteEnv = append(remoteEnv, fmt.Sprintf("%s=%s", val, response.Result.CurrentVersion.Secret))
+		}
+	} else {
+		fmt.Println("Not found")
 	}
+
+	return remoteEnv
 }
 
 func exec_subprocess(baseCommand []string, args []string) error {
-	get_env()
 	cmd := exec.Command(baseCommand[0], args...)
 
-	env := make([]string, len(os.Environ()))
-	copy(env, os.Environ())
-	env = append(env, "TYPE=PROD")
+	remoteEnv := get_env()
 
+	env := make([]string, len(os.Environ())+len(remoteEnv))
+	copy(env, os.Environ())
+	env = append(env, remoteEnv...)
 	cmd.Env = env
 
 	// Set up pipes for stdout and stderr
@@ -75,14 +153,14 @@ func exec_subprocess(baseCommand []string, args []string) error {
 	// Start the subprocess
 	err := cmd.Start()
 	if err != nil {
-		fmt.Println("Error starting subprocess:", err)
+		log.Fatal("Error starting subprocess:", err)
 		return err
 	}
 
 	// Wait for the subprocess to finish
 	err = cmd.Wait()
 	if err != nil {
-		fmt.Println("Error waiting for subprocess:", err)
+		log.Fatal("Error waiting for subprocess:", err)
 		return err
 	}
 
