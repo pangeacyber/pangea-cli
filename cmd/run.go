@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 	"time"
 
 	"github.com/pangeacyber/pangea-cli/utils"
@@ -76,25 +75,27 @@ var runCmd = &cobra.Command{
 	},
 }
 
-func get_env() []string {
-	cachePath := GetCachePath()
-	config := LoadCacheData(cachePath)
+func Get_env() []string {
 
-	currentDir, err := os.Getwd()
-	if err != nil {
-		log.Fatal("Error reading current directory path")
-	}
-
-	currentDir = strings.ToLower(currentDir)
-
-	fmt.Println(config.Paths[currentDir].Remote)
 	var remoteEnv []string
 
-	if _, isPathExists := config.Paths[currentDir]; isPathExists {
+	defaultProjectPathExists := os.Getenv("PANGEA_DEFAULT_PATH")
+
+	isPathExists, config, currentDir := utils.CheckPathExists()
+	if isPathExists || defaultProjectPathExists != "" {
+		var folderName string
+		if defaultProjectPathExists != "" {
+			folderName = defaultProjectPathExists
+		} else {
+			folderName = config.Paths[currentDir].Remote
+		}
+
+		fmt.Printf("Fetching secrets from: %s\n", folderName)
+
 		client := utils.CreateVaultAPIClient()
 
 		resp, err := client.R().
-			SetBody(fmt.Sprintf(`{"filter": {"folder":"%s"}}`, config.Paths[currentDir].Remote)).
+			SetBody(fmt.Sprintf(`{"filter": {"folder":"%s"}}`, folderName)).
 			Post("https://vault.aws.us.pangea.cloud/v1/list")
 		if err != nil {
 			log.Fatalln(err)
@@ -130,7 +131,7 @@ func get_env() []string {
 			remoteEnv = append(remoteEnv, fmt.Sprintf("%s=%s", val, response.Result.CurrentVersion.Secret))
 		}
 	} else {
-		fmt.Println("Not found")
+		log.Fatal("Folder not found. Please use `pangea select` to choose the project you would like to use secrets from.")
 	}
 
 	return remoteEnv
@@ -139,7 +140,7 @@ func get_env() []string {
 func exec_subprocess(baseCommand []string, args []string) error {
 	cmd := exec.Command(baseCommand[0], args...)
 
-	remoteEnv := get_env()
+	remoteEnv := Get_env()
 
 	env := make([]string, len(os.Environ())+len(remoteEnv))
 	copy(env, os.Environ())

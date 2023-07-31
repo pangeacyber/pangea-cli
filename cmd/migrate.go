@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
@@ -25,19 +26,30 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		var folderName string
+		isPathExists, config, currentDir := utils.CheckPathExists()
+		if isPathExists {
+			folderName = config.Paths[currentDir].Remote
+		} else {
+			log.Fatalln("Pangea project is not setup. Run `pange select` to select your project.")
+		}
+
 		envFilePath, err := cmd.Flags().GetString("file")
 		if err != nil {
 			log.Fatalln(err)
 		}
 
+		// TODO: Share viper instance across app
+		userConfigViper := viper.New()
 		// Initialize Viper
-		viper.SetConfigFile(envFilePath)
+		userConfigViper.SetConfigFile(envFilePath)
 
 		// Enable reading environment variables
-		viper.AutomaticEnv()
+		userConfigViper.AutomaticEnv()
+		userConfigViper.SetConfigType("dotenv")
 
 		// Read the .env file
-		if err := viper.ReadInConfig(); err != nil {
+		if err := userConfigViper.ReadInConfig(); err != nil {
 			fmt.Printf("Error reading .env file: %s\n", err)
 			os.Exit(1)
 		}
@@ -46,14 +58,12 @@ to quickly create a Cobra application.`,
 
 		fmt.Println("Migrating Secrets 🪄...")
 
-		// TODO: Make the folder dynamically read from cache_path.
-		folderName := "/secrets/bryan/dev/"
-
 		// Loop through variables from the .env file
-		settings := viper.AllSettings()
+		settings := userConfigViper.AllSettings()
 		for key, value := range settings {
+			fmt.Println(strings.ToUpper(key))
 			_, err := client.R().
-				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, key, value, folderName)).
+				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, strings.ToUpper(key), value, folderName)).
 				Post("https://vault.aws.us.pangea.cloud/v1/secret/store")
 			if err != nil {
 				log.Fatal(err)

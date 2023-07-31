@@ -6,19 +6,11 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
+	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-type CacheData struct {
-	Paths map[string]ProjectData `json:"paths"`
-}
-
-type ProjectData struct {
-	Remote string `json:"remote"`
-}
 
 // selectCmd represents the select command
 var selectCmd = &cobra.Command{
@@ -38,11 +30,13 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		cachePath := GetCachePath()
-		config := LoadCacheData(cachePath)
+		cachePath := utils.GetCachePath()
+		config := utils.LoadCacheData(cachePath)
 
-		config.Paths[currentDir] = ProjectData{
-			Remote: "/secrets/" + projectName,
+		projectEnv := SelectProjectEnvironment()
+
+		config.Paths[currentDir] = utils.ProjectData{
+			Remote: "/secrets/" + projectName + "/" + projectEnv,
 		}
 
 		saveCacheData(cachePath, config)
@@ -58,47 +52,27 @@ func promptUser(promptMessage string) string {
 	return input
 }
 
-func GetCachePath() string {
-	homeDir, _ := os.UserHomeDir()
-	return filepath.Join(homeDir, ".pangea", "cache_paths.json")
-}
-
 func fileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	return err == nil
 }
 
-func LoadCacheData(cachePath string) CacheData {
-	viper.SetConfigFile(cachePath)
-	viper.SetConfigType("json")
-	viper.SetDefault("paths", make(map[string]ProjectData))
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		// fmt.Printf("Error reading cache file: %v\n", err)
-	}
-
-	var config CacheData
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		fmt.Printf("Error parsing cache file: %v\n", err)
-	}
-
-	return config
+func SelectProjectEnvironment() string {
+	return promptUser("Which environment would you like to use (dev / stg / prod): ")
 }
 
-func saveCacheData(cachePath string, config CacheData) {
+func saveCacheData(cachePath string, config utils.CacheData) {
 	viper.SetConfigFile(cachePath)
 	viper.SetConfigType("json")
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Printf("Error reading cache file: %v\n", err)
-	}
+	viper.ReadInConfig()
+	// if err != nil {
+	// 	fmt.Printf("Error reading cache file: %v\n", err)
+	// }
 
 	viper.Set("paths", config.Paths)
 
-	err = viper.WriteConfig()
+	err := viper.WriteConfig()
 	if err != nil {
 		fmt.Printf("Error writing cache file: %v\n", err)
 	}
@@ -106,14 +80,4 @@ func saveCacheData(cachePath string, config CacheData) {
 
 func init() {
 	rootCmd.AddCommand(selectCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// selectCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// selectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
