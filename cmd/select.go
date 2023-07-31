@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/pangeacyber/pangea-cli/utils"
@@ -15,15 +16,15 @@ import (
 // selectCmd represents the select command
 var selectCmd = &cobra.Command{
 	Use:   "select",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Select the project you want to get secrets from on Pangea",
+	Long: `This command selects the project you want to link your current directory to a remote directory on Pangea vault.
+	You need to do this before you use "pangea run" to specify which directory you want to fetch secrets from.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		projectName := promptUser("Enter the name of your project: ")
+		remoteFolderName, err := cmd.Flags().GetString("folder-name")
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		currentDir, err := os.Getwd()
 		if err != nil {
 			fmt.Printf("Error getting current directory: %v\n", err)
@@ -33,15 +34,27 @@ to quickly create a Cobra application.`,
 		cachePath := utils.GetCachePath()
 		config := utils.LoadCacheData(cachePath)
 
-		projectEnv := SelectProjectEnvironment()
+		if remoteFolderName == "" {
+			projectName := promptUser("Enter the name of your project: ")
 
-		config.Paths[currentDir] = utils.ProjectData{
-			Remote: "/secrets/" + projectName + "/" + projectEnv,
+			projectEnv := SelectProjectEnvironment()
+
+			config.Paths[currentDir] = utils.ProjectData{
+				Remote: "/secrets/" + projectName + "/" + projectEnv,
+			}
+
+			saveCacheData(cachePath, config)
+
+			fmt.Printf("Project '%s' selected and cached.\n", projectName)
+		} else {
+			config.Paths[currentDir] = utils.ProjectData{
+				Remote: remoteFolderName,
+			}
+
+			saveCacheData(cachePath, config)
+
+			fmt.Printf("Project '%s' selected and cached.\n", remoteFolderName)
 		}
-
-		saveCacheData(cachePath, config)
-
-		fmt.Printf("Project '%s' selected and cached.\n", projectName)
 	},
 }
 
@@ -80,4 +93,6 @@ func saveCacheData(cachePath string, config utils.CacheData) {
 
 func init() {
 	rootCmd.AddCommand(selectCmd)
+
+	selectCmd.Flags().StringP("folder-name", "f", "", "folder name on Pangea vault (Example - /secrets/<project_name>/dev)")
 }

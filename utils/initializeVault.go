@@ -12,9 +12,18 @@ import (
 )
 
 func CreateVaultAPIClient() *resty.Client {
-	token, err := readTokenFromConfig()
-	if err != nil {
-		log.Fatalln(err)
+	var token string
+	var err error
+
+	defaultToken := os.Getenv("PANGEA_TOKEN")
+	// Ignore reading token from file if token given through the PANGEA_TOKEN env variable
+	if defaultToken == "" {
+		token, err = readTokenFromConfig()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	} else {
+		token = defaultToken
 	}
 
 	client := resty.New()

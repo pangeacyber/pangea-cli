@@ -83,6 +83,7 @@ func Get_env() []string {
 
 	isPathExists, config, currentDir := utils.CheckPathExists()
 	if isPathExists || defaultProjectPathExists != "" {
+		fmt.Println(isPathExists)
 		var folderName string
 		if defaultProjectPathExists != "" {
 			folderName = defaultProjectPathExists
