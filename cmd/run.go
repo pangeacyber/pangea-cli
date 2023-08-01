@@ -83,7 +83,6 @@ func Get_env() []string {
 
 	isPathExists, config, currentDir := utils.CheckPathExists()
 	if isPathExists || defaultProjectPathExists != "" {
-		fmt.Println(isPathExists)
 		var folderName string
 		if defaultProjectPathExists != "" {
 			folderName = defaultProjectPathExists
@@ -106,6 +105,9 @@ func Get_env() []string {
 		err = json.Unmarshal(resp.Body(), &response)
 		if err != nil {
 			log.Fatal("Error fetching secrets from Pangea")
+		}
+		if response.Status == "Unauthorized" {
+			log.Fatal("Unauthorized! Please run `pangea login` to get a new token.")
 		}
 
 		// Create a list of secret type IDs
