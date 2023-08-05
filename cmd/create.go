@@ -16,12 +16,7 @@ import (
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a pangea secrets project",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  `Creates a project in your pangea vault which let's you store your secrets.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println()
 	},
@@ -30,7 +25,6 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(createCmd)
 
-	createCmd.Flags().Bool("create-envs", false, "Create dev, staging, and prod environments")
 	createCmd.Flags().StringP("project-name", "n", "", "Project Name (used as folder name)")
 
 	createCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
@@ -40,12 +34,10 @@ func init() {
 }
 
 func validateInput(flags *pflag.FlagSet) error {
-	shouldCreateEnvironments, err := flags.GetBool("create-envs")
+	projectName, err := flags.GetString("project-name")
 	if err != nil {
 		return err
 	}
-
-	projectName, err := flags.GetString("project-name")
 
 	if projectName == "" {
 		fmt.Print("Enter the name of your project: ")
@@ -55,47 +47,18 @@ func validateInput(flags *pflag.FlagSet) error {
 		}
 	}
 
-	if !shouldCreateEnvironments {
-		fmt.Print("[Recommended] Do you want to create dev, staging, and prod environments (y/n): ")
-		var confirm string
-		_, err := fmt.Scanln(&confirm)
-		if err != nil {
-			return err
-		}
+	client := utils.CreateVaultAPIClient()
+	_, err = client.R().
+		SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, projectName, "/secrets/")).
+		Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
 
-		if confirm != "y" && confirm != "n" {
-			return fmt.Errorf("invalid input. Only 'y' or 'n' are allowed")
-		}
-
-		client := utils.CreateVaultAPIClient()
-
-		if confirm == "y" {
-
-			envs := []string{"dev", "stg", "prd"}
-
-			for _, env := range envs {
-
-				_, err := client.R().
-					SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, env, fmt.Sprintf("secrets/%s/", projectName))).
-					Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
-				if err != nil {
-					log.Fatalln(err)
-				}
-			}
-
-			fmt.Printf("Created dev, stg, and prd environments at %s in your Pangea Vault", fmt.Sprintf("/secrets/%s/", projectName))
-		} else {
-			_, err := client.R().
-				SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, "default", fmt.Sprintf("secrets/%s/", projectName))).
-				Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
-
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			fmt.Printf("Created a default environment at %s in your Pangea Vault", fmt.Sprintf("/secrets/%s/", projectName))
-		}
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	SelectProject(fmt.Sprintf("/secrets/%s/", projectName))
+
+	fmt.Printf("Project created at %s in Pangea vault\n\nRun `pangea migrate -f .env` to migrate your .env file to your project", fmt.Sprintf("/secrets/%s/", projectName))
 
 	return nil
 }

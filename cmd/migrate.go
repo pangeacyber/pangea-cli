@@ -62,11 +62,21 @@ to quickly create a Cobra application.`,
 		settings := userConfigViper.AllSettings()
 		for key, value := range settings {
 			fmt.Println(strings.ToUpper(key))
-			_, err := client.R().
+			resp, err := client.R().
 				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, strings.ToUpper(key), value, folderName)).
 				Post("https://vault.aws.us.pangea.cloud/v1/secret/store")
 			if err != nil {
 				log.Fatal(err)
+			}
+
+			if resp.IsError() {
+				if resp.StatusCode() == 400 {
+					err = fmt.Errorf("Error: Secret %s already exists in your project at %s.\nPlease go to your project at https://console.pangea.cloud/service/vault/data to rotate (update) it.", strings.ToUpper(key), folderName)
+					fmt.Println(err)
+					os.Exit(1)
+				} else {
+					log.Fatal("Error migrating secrets to your vault. More info:\n", err)
+				}
 			}
 		}
 

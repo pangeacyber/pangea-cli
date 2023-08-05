@@ -67,7 +67,10 @@ func loginPrompts(noBrowserStatus bool) {
 	// TODO: Check if Pangea token is valid
 	token := readInput()
 
-	err := utils.WriteTokenToFile(token)
+	fmt.Print("Enter Pangea Domain: ")
+	domain := readInput()
+
+	err := utils.WriteTokenToFile(token, domain)
 	if err != nil {
 		log.Fatal(err)
 	}

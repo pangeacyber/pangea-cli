@@ -25,37 +25,41 @@ var selectCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		currentDir, err := os.Getwd()
-		if err != nil {
-			fmt.Printf("Error getting current directory: %v\n", err)
-			return
-		}
-
-		cachePath := utils.GetCachePath()
-		config := utils.LoadCacheData(cachePath)
-
-		if remoteFolderName == "" {
-			projectName := promptUser("Enter the name of your project: ")
-
-			projectEnv := SelectProjectEnvironment()
-
-			config.Paths[currentDir] = utils.ProjectData{
-				Remote: "/secrets/" + projectName + "/" + projectEnv,
-			}
-
-			saveCacheData(cachePath, config)
-
-			fmt.Printf("Project '%s' selected and cached.\n", projectName)
-		} else {
-			config.Paths[currentDir] = utils.ProjectData{
-				Remote: remoteFolderName,
-			}
-
-			saveCacheData(cachePath, config)
-
-			fmt.Printf("Project '%s' selected and cached.\n", remoteFolderName)
-		}
+		SelectProject(remoteFolderName)
 	},
+}
+
+func SelectProject(remoteFolderName string) {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Printf("Error getting current directory: %v\n", err)
+		return
+	}
+
+	cachePath := utils.GetCachePath()
+	config := utils.LoadCacheData(cachePath)
+
+	if remoteFolderName == "" {
+		projectName := promptUser("Enter the name of your project: ")
+
+		projectEnv := SelectProjectEnvironment()
+
+		config.Paths[currentDir] = utils.ProjectData{
+			Remote: "/secrets/" + projectName + "/" + projectEnv,
+		}
+
+		saveCacheData(cachePath, config)
+
+		fmt.Printf("Project '%s' selected and cached.\n", projectName)
+	} else {
+		config.Paths[currentDir] = utils.ProjectData{
+			Remote: remoteFolderName,
+		}
+
+		saveCacheData(cachePath, config)
+
+		fmt.Printf("Project '%s' selected and cached.\n", remoteFolderName)
+	}
 }
 
 func promptUser(promptMessage string) string {
