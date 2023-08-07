@@ -31,7 +31,9 @@ to quickly create a Cobra application.`,
 		if isPathExists {
 			folderName = config.Paths[currentDir].Remote
 		} else {
-			log.Fatalln("Pangea project is not setup. Run `pange select` to select your project.")
+			fmt.Println("Pangea project is not setup. Run `pange select` to select your project.")
+			// Error exit
+			os.Exit(0)
 		}
 
 		envFilePath, err := cmd.Flags().GetString("file")
@@ -73,6 +75,7 @@ to quickly create a Cobra application.`,
 				if resp.StatusCode() == 400 {
 					err = fmt.Errorf("Error: Secret %s already exists in your project at %s.\nPlease go to your project at https://console.pangea.cloud/service/vault/data to rotate (update) it.", strings.ToUpper(key), folderName)
 					fmt.Println(err)
+					// Error exit
 					os.Exit(1)
 				} else {
 					log.Fatal("Error migrating secrets to your vault. More info:\n", err)
@@ -80,7 +83,7 @@ to quickly create a Cobra application.`,
 			}
 		}
 
-		fmt.Printf("Success! All secrets have been migrated to %s in your secure Pangea Vault", folderName)
+		fmt.Printf("Success! All secrets have been migrated to %s in your secure Pangea Vault\n", folderName)
 		fmt.Println("You can now delete your env file and run `pangea run -c $APP_COMMAND`")
 	},
 }

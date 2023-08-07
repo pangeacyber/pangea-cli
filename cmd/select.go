@@ -42,10 +42,11 @@ func SelectProject(remoteFolderName string) {
 	if remoteFolderName == "" {
 		projectName := promptUser("Enter the name of your project: ")
 
-		projectEnv := SelectProjectEnvironment()
+		// Removing env selection for v1
+		// projectEnv := SelectProjectEnvironment()
 
 		config.Paths[currentDir] = utils.ProjectData{
-			Remote: "/secrets/" + projectName + "/" + projectEnv,
+			Remote: "/secrets/" + projectName,
 		}
 
 		saveCacheData(cachePath, config)
