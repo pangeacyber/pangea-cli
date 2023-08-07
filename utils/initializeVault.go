@@ -2,14 +2,23 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/go-resty/resty/v2"
+	"github.com/spf13/viper"
 )
+
+type Config struct {
+	Title    string             `mapstructure:"title"`
+	Services map[string]Service `mapstructure:"services"`
+}
+
+type Service struct {
+	PANGEA_DOMAIN string `mapstructure:"PANGEA_DOMAIN"`
+	PANGEA_TOKEN  string `mapstructure:"PANGEA_TOKEN"`
+}
 
 func CreateVaultAPIClient() *resty.Client {
 	var token string
@@ -48,23 +57,38 @@ func readTokenFromConfig() (string, error) {
 	}
 
 	// Create or open the config file
-	configPath := filepath.Join(pangeaDir, "config")
+	configPath := filepath.Join(pangeaDir, "config.toml")
 
-	tokenBytes, err := ioutil.ReadFile(configPath)
-	if err != nil {
+	configViper := viper.New()
+	configViper.SetConfigFile(configPath)
+	// Check if the config file exists
+	if _, err := os.Stat(configPath); err != nil {
+		fmt.Println(err)
+		return "", fmt.Errorf("Pangea Token doesn't exist. Run `pangea login` to setup your CLI.")
+	}
+
+	// Read the configuration
+	if err := configViper.ReadInConfig(); err != nil {
 		return "", fmt.Errorf("Error fetching your pangea token: %s", err)
 	}
 
-	token := strings.TrimSpace(string(tokenBytes))
+	// Get the token from the configuration
+	var config Config
+	if err := configViper.Unmarshal(&config); err != nil {
+		return "", fmt.Errorf("Error unmarshaling config: %s", err)
+	}
+
+	token := config.Services["default"].PANGEA_TOKEN
+
 	if token == "" {
-		return "", fmt.Errorf("Pangea Token doesn't exist. Run pangea login to setup your CLI.")
+		return "", fmt.Errorf("Pangea Token doesn't exist. Run `pangea login` to setup your CLI.")
 	}
 
 	return token, nil
 }
 
 // writeTokenToFile writes the Pangea token to the specified file
-func WriteTokenToFile(token string) error {
+func WriteTokenToFile(token string, domain string) error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return err
@@ -78,15 +102,24 @@ func WriteTokenToFile(token string) error {
 	}
 
 	// Create or open the config file
-	configPath := filepath.Join(pangeaDir, "config")
-	file, err := os.OpenFile(configPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
+	configPath := filepath.Join(pangeaDir, "config.toml")
+	configViper := viper.New()
+	configViper.SetConfigFile(configPath)
 
-	_, err = file.WriteString(token)
-	if err != nil {
+	newConfig := Config{
+		Title: "Pangea",
+		Services: map[string]Service{
+			"default": {
+				PANGEA_TOKEN:  token,
+				PANGEA_DOMAIN: domain,
+			},
+		},
+	}
+
+	// Write the new config to the TOML file
+	configViper.Set("title", newConfig.Title)
+	configViper.Set("services", newConfig.Services)
+	if err := configViper.WriteConfig(); err != nil {
 		return err
 	}
 

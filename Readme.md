@@ -5,9 +5,9 @@ The easiest way to scrap .env files and store your API keys securely on [Pangea]
 ## Get Started
 
 ### Installation
-For linux systems
+For linux / macOS systems
 ```bash
-curl -L -o /usr/local/bin/pangea https://github.com/snpranav/secrets-cli/releases/download/v0.1.3/pangea-darwin-amd64
+curl -L -o /usr/local/bin/pangea "https://github.com/pangeacyber/pangea-cli/releases/latest/download/pangea-$(uname -s)-$(uname -m)"
 ```
 
 ### Login to Pangea
@@ -44,7 +44,7 @@ Step 1: Install the CLI in your `Dockerfile`. Here's an example for a Node app
 FROM node:lts-bullseye
 
 # Install Pangea CLI
-RUN curl -L -o /bin/pangea https://github.com/snpranav/secrets-cli/releases/download/v0.1.3/pangea-linux-amd64
+curl -L -o /usr/local/bin/pangea "https://github.com/pangeacyber/pangea-cli/releases/latest/download/pangea-$(uname -s)-$(uname -m)"
 
 WORKDIR /app
 COPY . .
