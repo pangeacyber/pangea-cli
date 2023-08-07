@@ -17,13 +17,11 @@ import (
 // migrateCmd represents the migrate command
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Migrate local .env file to Pangea Vault",
+	Long: `Migrate your local .env file to Pangea's secure vault.
+	Simply run "pangea run -f <path_to_env_file>"
+	
+	Note: You must select or create a project before running migrate.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var folderName string
