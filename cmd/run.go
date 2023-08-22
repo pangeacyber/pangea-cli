@@ -9,19 +9,16 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"time"
 
 	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
 )
 
 type VaultListResponse struct {
-	RequestID    string `json:"request_id"`
-	RequestTime  string `json:"request_time"`
-	ResponseTime string `json:"response_time"`
-	Status       string `json:"status"`
-	Summary      string `json:"summary"`
-	Result       struct {
+	RequestID string `json:"request_id"`
+	Status    string `json:"status"`
+	Summary   string `json:"summary"`
+	Result    struct {
 		Count int `json:"count"`
 		Items []struct {
 			Type string `json:"type"`
@@ -32,17 +29,14 @@ type VaultListResponse struct {
 }
 
 type VaultSecretResponse struct {
-	RequestID    string    `json:"request_id"`
-	RequestTime  time.Time `json:"request_time"`
-	ResponseTime time.Time `json:"response_time"`
-	Status       string    `json:"status"`
-	Summary      string    `json:"summary"`
-	Result       struct {
+	RequestID string `json:"request_id"`
+	Status    string `json:"status"`
+	Summary   string `json:"summary"`
+	Result    struct {
 		CurrentVersion struct {
-			CreatedAt time.Time `json:"created_at"`
-			Secret    string    `json:"secret"`
-			State     string    `json:"state"`
-			Version   int       `json:"version"`
+			Secret  string `json:"secret"`
+			State   string `json:"state"`
+			Version int    `json:"version"`
 		} `json:"current_version"`
 		ID        string     `json:"id"`
 		ItemState string     `json:"item_state"`
@@ -79,7 +73,7 @@ func Get_env() []string {
 
 	var remoteEnv []string
 
-	defaultProjectPathExists := os.Getenv("PANGEA_DEFAULT_PATH")
+	defaultProjectPathExists := os.Getenv("PANGEA_DEFAULT_FOLDER")
 
 	isPathExists, config, currentDir := utils.CheckPathExists()
 	if isPathExists || defaultProjectPathExists != "" {
@@ -130,6 +124,10 @@ func Get_env() []string {
 
 			var response VaultSecretResponse
 			err = json.Unmarshal(resp.Body(), &response)
+
+			if err != nil {
+				log.Fatalf("Error while fetching secrets. %s", err)
+			}
 
 			remoteEnv = append(remoteEnv, fmt.Sprintf("%s=%s", val, response.Result.CurrentVersion.Secret))
 		}

@@ -56,10 +56,11 @@ ENTRYPOINT ["pangea", "run", "-c"]
 CMD ["npm", "run", "dev"]
 ```
 
-Now run your docker container by passing in the PANGEA_TOKEN and PANGEA_DEFAULT_PATH.
+Now run your docker container by passing in the PANGEA_TOKEN and PANGEA_DEFAULT_FOLDER.
 ```bash
 docker run \
     -e PANGEA_TOKEN=pts... \
-    -e PANGEA_DEFAULT_PATH=/secrets/... \
+    -e PANGEA_DOMAIN=aws.us.pangea.cloud \
+    -e PANGEA_DEFAULT_FOLDER=/secrets/... \
     <IMAGE_NAME>
 ```
