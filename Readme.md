@@ -3,7 +3,7 @@
 The easiest way to scrap .env files and store your API keys securely on [Pangea](https://pangea.cloud).
 
 ## Get Started
-
+[Video Walkthrough on Getting Started](https://www.youtube.com/watch?v=R_LSoDcXj9Y)
 ### Installation
 For linux / macOS systems
 ```bash
