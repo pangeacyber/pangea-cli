@@ -47,10 +47,10 @@ func validateInput(flags *pflag.FlagSet) error {
 		}
 	}
 
-	client := utils.CreateVaultAPIClient()
+	client, pangeaDomain := utils.CreateVaultAPIClient()
 	_, err = client.R().
 		SetBody(fmt.Sprintf(`{"name":"%s", "folder":"%s"}`, projectName, "/secrets/")).
-		Post("https://vault.aws.us.pangea.cloud/v1/folder/create")
+		Post(fmt.Sprintf("https://vault.%s/v1/folder/create", pangeaDomain))
 
 	if err != nil {
 		log.Fatalln(err)
