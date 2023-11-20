@@ -20,40 +20,43 @@ type Service struct {
 	PANGEA_TOKEN  string `mapstructure:"PANGEA_TOKEN"`
 }
 
-func CreateVaultAPIClient() *resty.Client {
+func CreateVaultAPIClient() (*resty.Client, string) {
 	var token string
+	var domain string
 	var err error
 
 	defaultToken := os.Getenv("PANGEA_TOKEN")
+	defaultDomain := os.Getenv("PANGEA_DOMAIN")
 	// Ignore reading token from file if token given through the PANGEA_TOKEN env variable
-	if defaultToken == "" {
-		token, err = readTokenFromConfig()
+	if defaultToken == "" || defaultDomain == "" {
+		token, domain, err = readTokenFromConfig()
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else {
 		token = defaultToken
+		domain = defaultDomain
 	}
 
 	client := resty.New()
 	client.SetAuthToken(token)
 	client.SetHeader("Content-Type", "application/json")
 
-	return client
+	return client, domain
 }
 
 // ReadTokenFromConfig reads the token from the ~/.pangea/config file.
 // If the file or folder doesn't exist, it returns an error.
-func readTokenFromConfig() (string, error) {
+func readTokenFromConfig() (string, string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// Create the .pangea folder if it doesn't exist
 	pangeaDir := filepath.Join(homeDir, ".pangea")
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// Create or open the config file
@@ -64,27 +67,33 @@ func readTokenFromConfig() (string, error) {
 	// Check if the config file exists
 	if _, err := os.Stat(configPath); err != nil {
 		fmt.Println(err)
-		return "", fmt.Errorf("Pangea Token doesn't exist. Run `pangea login` to setup your CLI.")
+		return "", "", fmt.Errorf("Pangea Token doesn't exist. Run `pangea login` to setup your CLI.")
 	}
 
 	// Read the configuration
 	if err := configViper.ReadInConfig(); err != nil {
-		return "", fmt.Errorf("Error fetching your pangea token: %s", err)
+		return "", "", fmt.Errorf("Error fetching your pangea token: %s", err)
 	}
 
 	// Get the token from the configuration
 	var config Config
 	if err := configViper.Unmarshal(&config); err != nil {
-		return "", fmt.Errorf("Error unmarshaling config: %s", err)
+		return "", "", fmt.Errorf("Error unmarshaling config: %s", err)
 	}
 
 	token := config.Services["default"].PANGEA_TOKEN
+	domain := config.Services["default"].PANGEA_DOMAIN
 
 	if token == "" {
-		return "", fmt.Errorf("Pangea Token doesn't exist. Run `pangea login` to setup your CLI.")
+		return "", "", fmt.Errorf("Pangea Token doesn't exist. Run `pangea login` to setup your CLI.")
 	}
 
-	return token, nil
+	if domain == "" {
+		// Default domain if not specified is aws.us.pangea.cloud
+		domain = "aws.us.pangea.cloud"
+	}
+
+	return token, domain, nil
 }
 
 // writeTokenToFile writes the Pangea token to the specified file

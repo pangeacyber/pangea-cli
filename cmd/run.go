@@ -86,11 +86,11 @@ func Get_env() []string {
 
 		fmt.Printf("Fetching secrets from: %s\n", folderName)
 
-		client := utils.CreateVaultAPIClient()
+		client, pangeaDomain := utils.CreateVaultAPIClient()
 
 		resp, err := client.R().
 			SetBody(fmt.Sprintf(`{"filter": {"folder":"%s"}}`, folderName)).
-			Post("https://vault.aws.us.pangea.cloud/v1/list")
+			Post(fmt.Sprintf("https://vault.%s/v1/list", pangeaDomain))
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -116,7 +116,7 @@ func Get_env() []string {
 		for key, val := range secretIDs {
 			resp, err := client.R().
 				SetBody(fmt.Sprintf(`{"id": "%s"}`, key)).
-				Post("https://vault.aws.us.pangea.cloud/v1/get")
+				Post(fmt.Sprintf("https://vault.%s/v1/get", pangeaDomain))
 
 			if err != nil {
 				log.Fatal("Error fetching secret ", val)

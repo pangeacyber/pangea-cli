@@ -54,7 +54,7 @@ var migrateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		client := utils.CreateVaultAPIClient()
+		client, pangeaDomain := utils.CreateVaultAPIClient()
 
 		fmt.Println("Migrating Secrets 🪄...")
 
@@ -64,7 +64,7 @@ var migrateCmd = &cobra.Command{
 			fmt.Println(strings.ToUpper(key))
 			resp, err := client.R().
 				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, strings.ToUpper(key), value, folderName)).
-				Post("https://vault.aws.us.pangea.cloud/v1/secret/store")
+				Post(fmt.Sprintf("https://vault.%s/v1/secret/store", pangeaDomain))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -76,7 +76,7 @@ var migrateCmd = &cobra.Command{
 					// Error exit
 					os.Exit(1)
 				} else {
-					log.Fatal("Error migrating secrets to your vault. More info:\n", err)
+					log.Fatal("Error migrating secrets to your vault. More info:\n", resp.Status())
 				}
 			}
 		}
