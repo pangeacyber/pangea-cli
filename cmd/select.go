@@ -70,11 +70,6 @@ func promptUser(promptMessage string) string {
 	return input
 }
 
-func fileExists(filePath string) bool {
-	_, err := os.Stat(filePath)
-	return err == nil
-}
-
 func SelectProjectEnvironment() string {
 	return promptUser("Which environment would you like to use (dev / stg / prod): ")
 }
@@ -83,12 +78,12 @@ func saveCacheData(cachePath string, config utils.CacheData) {
 	viper.SetConfigFile(cachePath)
 	viper.SetConfigType("json")
 
-	viper.ReadInConfig()
+	viper.ReadInConfig() //nolint:errcheck
 	// if err != nil {
 	// 	fmt.Printf("Error reading cache file: %v\n", err)
 	// }
 
-	viper.Set("paths", config.Paths)
+	viper.Set("paths", config.Paths) //nolint:errcheck
 
 	err := viper.WriteConfig()
 	if err != nil {

@@ -47,13 +47,10 @@ func LoadCacheData(cachePath string) CacheData {
 	internalViper.SetConfigType("json")
 	internalViper.SetDefault("paths", make(map[string]ProjectData))
 
-	err := internalViper.ReadInConfig()
-	if err != nil {
-		// fmt.Printf("Error reading cache file: %v\n", err)
-	}
+	internalViper.ReadInConfig() //nolint:errcheck
 
 	var config CacheData
-	err = internalViper.Unmarshal(&config)
+	err := internalViper.Unmarshal(&config)
 	if err != nil {
 		fmt.Printf("Error parsing cache file: %v\n", err)
 	}
