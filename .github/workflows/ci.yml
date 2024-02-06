@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+  merge_group:
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prefetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5.0.0
+        with:
+          go-version: "1.20"
+          cache-dependency-path: "**/*.sum"
+
+  lint:
+    needs: [prefetch]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      checks: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5.0.0
+        with:
+          go-version: "1.20"
+          cache-dependency-path: "**/*.sum"
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3.7.0
+        with:
+          version: v1.55.2
+
+  build:
+    needs: [prefetch]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [darwin, linux, windows]
+        arch: [amd64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5.0.0
+        with:
+          go-version: "1.20"
+          cache-dependency-path: "**/*.sum"
+
+      - name: Build
+        uses: crazy-max/ghaction-xgo@v3.0.0
+        with:
+          xgo_version: v0.31.0
+          go_version: "1.20"
+          dest: bin
+          targets: ${{ matrix.platform }}/${{ matrix.arch }}
+          race: true
+          trimpath: true
+          prefix: pangea-cli
+
+      - name: Upload
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: pangea-cli-${{ matrix.platform }}-${{ matrix.arch }}
+          path: ./bin

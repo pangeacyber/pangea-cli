@@ -45,7 +45,7 @@ func openBrowser(url string) error {
 }
 
 func loginPrompts(noBrowserStatus bool) {
-	if noBrowserStatus == false {
+	if !noBrowserStatus {
 		fmt.Println("When you hit enter, we will redirect you to the Pangea Vault page where you will need to copy the Default Pangea Token and paste it in the next prompt. Ready 🏎️?")
 		fmt.Scanln()
 

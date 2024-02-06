@@ -40,7 +40,7 @@ pangea run -c <APP_COMMAND>
 ## Usage
 ### Docker Container
 Step 1: Install the CLI in your `Dockerfile`. Here's an example for a Node app
-```docker
+```dockerfile
 FROM node:lts-bullseye
 
 # Install Pangea CLI
