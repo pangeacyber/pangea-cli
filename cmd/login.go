@@ -18,8 +18,8 @@ import (
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Connect CLI to Pangea Vault",
-	Long:  `Login to CLI and connect it to Pangae's Vault.`,
+	Short: "Connect Pangea CLI to Pangea Vault",
+	Long:  `Login to Pangea CLI and connect it to Pangae's Vault.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		noBrowser, _ := cmd.Flags().GetBool("no-browser")
 		loginPrompts(noBrowser)

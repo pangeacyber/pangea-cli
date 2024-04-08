@@ -50,8 +50,8 @@ var command []string
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run your application with secrets on Pangea",
-	Long: `Run your applications with secrets loaded as environment variables into your application on Pangea.
+	Short: "Run your application with secrets on Pangea Vault",
+	Long: `Run your applications with secrets loaded as environment variables into your application on Pangea Vault.
 	
 	For example:
 		pangea run -c npm run dev

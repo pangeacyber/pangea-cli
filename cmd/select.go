@@ -16,8 +16,8 @@ import (
 // selectCmd represents the select command
 var selectCmd = &cobra.Command{
 	Use:   "select",
-	Short: "Select the workspace you want to get secrets from on Pangea",
-	Long: `This command selects the workspace you want to link your current directory to a remote directory on Pangea vault.
+	Short: "Select the workspace you want to get secrets from on Pangea Vault",
+	Long: `This command selects the workspace you want to link your current directory to a remote directory on Pangea Vault.
 	You need to do this before you use "pangea run" to specify which directory you want to fetch secrets from.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		remoteFolderName, err := cmd.Flags().GetString("folder-name")

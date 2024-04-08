@@ -16,17 +16,17 @@ pangea login
 ```
 Note: Follow the prompt and paste your Pangea vault token
 
-### Create Project
+### Create Workspace
 ```bash
 pangea create
 ```
 
-### Select Project
+### Select Workspace
 ```bash
 pangea select
 ```
 
-### Migrate .env file to a Pangea project
+### Migrate .env file to a Pangea Workspace
 ```bash
 pangea migrate -f .env
 ```

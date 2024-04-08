@@ -12,10 +12,9 @@ import (
 // loginCmd represents the login command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Pring Pangea CLI version",
-	Long:  "Pring Pangea CLI version",
+	Short: "Print Pangea CLI version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("pangea-cli v1.0 Beta")
+		fmt.Println("pangea v1.0 Beta")
 	},
 }
 

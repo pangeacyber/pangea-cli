@@ -12,7 +12,7 @@ import (
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
 	Use:   "ls",
-	Short: "View all secrets for the selected workspaces",
+	Short: "View all secrets for the selected workspace",
 	Long: `pangea ls
 	
 	shows you all the secrets in your current selected workspace.`,
