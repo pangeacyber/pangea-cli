@@ -21,7 +21,7 @@ var migrateCmd = &cobra.Command{
 	Long: `Migrate your local .env file to Pangea's secure vault.
 	Simply run "pangea run -f <path_to_env_file>"
 	
-	Note: You must select or create a project before running migrate.`,
+	Note: You must select or create a workspace before running migrate.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var folderName string
@@ -29,7 +29,7 @@ var migrateCmd = &cobra.Command{
 		if isPathExists {
 			folderName = config.Paths[currentDir].Remote
 		} else {
-			fmt.Println("Pangea project is not setup. Run `pange select` to select your project.")
+			fmt.Println("Pangea workspace is not setup. Run `pange select` to select your workspace.")
 			// Error exit
 			os.Exit(0)
 		}
@@ -71,7 +71,7 @@ var migrateCmd = &cobra.Command{
 
 			if resp.IsError() {
 				if resp.StatusCode() == 400 {
-					err = fmt.Errorf("Error: Secret %s already exists in your project at %s.\nPlease go to your project at https://console.pangea.cloud/service/vault/data to rotate (update) it.", strings.ToUpper(key), folderName)
+					err = fmt.Errorf("Error: Secret %s already exists in your workspace at %s.\nPlease go to your workspace at https://console.pangea.cloud/service/vault/data to rotate (update) it.", strings.ToUpper(key), folderName)
 					fmt.Println(err)
 					// Error exit
 					os.Exit(1)

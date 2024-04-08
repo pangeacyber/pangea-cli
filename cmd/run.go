@@ -73,13 +73,13 @@ func Get_env() []string {
 
 	var remoteEnv []string
 
-	defaultProjectPathExists := os.Getenv("PANGEA_DEFAULT_FOLDER")
+	defaultWorkspacePathExists := os.Getenv("PANGEA_DEFAULT_FOLDER")
 
 	isPathExists, config, currentDir := utils.CheckPathExists()
-	if isPathExists || defaultProjectPathExists != "" {
+	if isPathExists || defaultWorkspacePathExists != "" {
 		var folderName string
-		if defaultProjectPathExists != "" {
-			folderName = defaultProjectPathExists
+		if defaultWorkspacePathExists != "" {
+			folderName = defaultWorkspacePathExists
 		} else {
 			folderName = config.Paths[currentDir].Remote
 		}
@@ -132,7 +132,7 @@ func Get_env() []string {
 			remoteEnv = append(remoteEnv, fmt.Sprintf("%s=%s", val, response.Result.CurrentVersion.Secret))
 		}
 	} else {
-		log.Fatal("Folder not found. Please use `pangea select` to choose the project you would like to use secrets from.")
+		log.Fatal("Folder not found. Please use `pangea select` to choose the workspace you would like to use secrets from.")
 	}
 
 	return remoteEnv

@@ -12,10 +12,10 @@ import (
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
 	Use:   "ls",
-	Short: "View all secrets for the selected projects",
+	Short: "View all secrets for the selected workspaces",
 	Long: `pangea ls
 	
-	shows you all the secrets in your current selected project.`,
+	shows you all the secrets in your current selected workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		remoteEnv := Get_env()
 

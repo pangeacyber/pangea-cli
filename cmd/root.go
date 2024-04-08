@@ -11,7 +11,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cli",
+	Use:   "pangea",
 	Short: "Run any application with secrets anywhere using the Pangea secrets CLI",
 	Long: `Pangea Secrets CLI lets you store your application secrets in Pangea's secure vault and use them at runtime everywhere.
 
