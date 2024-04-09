@@ -1,6 +1,6 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Copyright 2023 Pangea Cyber Corporation
+// Author: Pangea Cyber Corporation
+
 package cmd
 
 import (
@@ -14,7 +14,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print Pangea CLI version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("pangea v1.0 Beta")
+		fmt.Println("v1.0 Beta")
 	},
 }
 

@@ -1,6 +1,6 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Copyright 2023 Pangea Cyber Corporation
+// Author: Pangea Cyber Corporation
+
 package cmd
 
 import (
@@ -12,7 +12,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "pangea",
-	Short: "Pangea CLI",
+	Short: "Pangea CLI version 1.0 Beta",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

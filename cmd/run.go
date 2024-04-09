@@ -1,6 +1,6 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Copyright 2023 Pangea Cyber Corporation
+// Author: Pangea Cyber Corporation
+
 package cmd
 
 import (
