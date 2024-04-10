@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// loginCmd represents the login command
+// versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print Pangea CLI version",
