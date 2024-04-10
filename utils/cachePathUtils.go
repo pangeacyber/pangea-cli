@@ -11,10 +11,10 @@ import (
 )
 
 type CacheData struct {
-	Paths map[string]ProjectData `json:"paths"`
+	Paths map[string]WorkspaceData `json:"paths"`
 }
 
-type ProjectData struct {
+type WorkspaceData struct {
 	Remote string `json:"remote"`
 }
 
@@ -45,7 +45,7 @@ func LoadCacheData(cachePath string) CacheData {
 	internalViper := viper.New()
 	internalViper.SetConfigFile(cachePath)
 	internalViper.SetConfigType("json")
-	internalViper.SetDefault("paths", make(map[string]ProjectData))
+	internalViper.SetDefault("paths", make(map[string]WorkspaceData))
 
 	internalViper.ReadInConfig() //nolint:errcheck
 

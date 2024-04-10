@@ -1,6 +1,6 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Copyright 2023 Pangea Cyber Corporation
+// Author: Pangea Cyber Corporation
+
 package cmd
 
 import (
@@ -16,8 +16,8 @@ import (
 // selectCmd represents the select command
 var selectCmd = &cobra.Command{
 	Use:   "select",
-	Short: "Select the project you want to get secrets from on Pangea",
-	Long: `This command selects the project you want to link your current directory to a remote directory on Pangea vault.
+	Short: "Select the workspace you want to get secrets from on Pangea Vault",
+	Long: `This command selects the workspace you want to link your current directory to a remote directory on Pangea Vault.
 	You need to do this before you use "pangea run" to specify which directory you want to fetch secrets from.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		remoteFolderName, err := cmd.Flags().GetString("folder-name")
@@ -25,11 +25,11 @@ var selectCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		SelectProject(remoteFolderName)
+		SelectWorkspace(remoteFolderName)
 	},
 }
 
-func SelectProject(remoteFolderName string) {
+func SelectWorkspace(remoteFolderName string) {
 	currentDir, err := os.Getwd()
 	if err != nil {
 		fmt.Printf("Error getting current directory: %v\n", err)
@@ -40,26 +40,26 @@ func SelectProject(remoteFolderName string) {
 	config := utils.LoadCacheData(cachePath)
 
 	if remoteFolderName == "" {
-		projectName := promptUser("Enter the name of your project: ")
+		workspaceName := promptUser("Enter the name of your workspace: ")
 
 		// Removing env selection for v1
-		// projectEnv := SelectProjectEnvironment()
+		// workspaceEnv := SelectWorkspaceEnvironment()
 
-		config.Paths[currentDir] = utils.ProjectData{
-			Remote: "/secrets/" + projectName,
+		config.Paths[currentDir] = utils.WorkspaceData{
+			Remote: "/secrets/" + workspaceName,
 		}
 
 		saveCacheData(cachePath, config)
 
-		fmt.Printf("Project '%s' selected and cached.\n", projectName)
+		fmt.Printf("Workspace '%s' selected and cached.\n", workspaceName)
 	} else {
-		config.Paths[currentDir] = utils.ProjectData{
+		config.Paths[currentDir] = utils.WorkspaceData{
 			Remote: remoteFolderName,
 		}
 
 		saveCacheData(cachePath, config)
 
-		fmt.Printf("Project '%s' selected and cached.\n", remoteFolderName)
+		fmt.Printf("Workspace '%s' selected and cached.\n", remoteFolderName)
 	}
 }
 
@@ -70,7 +70,7 @@ func promptUser(promptMessage string) string {
 	return input
 }
 
-func SelectProjectEnvironment() string {
+func SelectWorkspaceEnvironment() string {
 	return promptUser("Which environment would you like to use (dev / stg / prod): ")
 }
 
@@ -94,5 +94,5 @@ func saveCacheData(cachePath string, config utils.CacheData) {
 func init() {
 	rootCmd.AddCommand(selectCmd)
 
-	selectCmd.Flags().StringP("folder-name", "f", "", "folder name on Pangea vault (Example - /secrets/<project_name>/dev)")
+	selectCmd.Flags().StringP("folder-name", "f", "", "folder name on Pangea vault (Example - /secrets/<workspace_name>/dev)")
 }

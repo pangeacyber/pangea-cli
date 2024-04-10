@@ -1,6 +1,6 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Copyright 2023 Pangea Cyber Corporation
+// Author: Pangea Cyber Corporation
+
 package cmd
 
 import (
@@ -45,24 +45,23 @@ type VaultSecretResponse struct {
 	} `json:"result"`
 }
 
-var command []string
-
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run your application with secrets on Pangea",
-	Long: `Run your applications with secrets loaded as environment variables into your application on Pangea.
+	Short: "Run your application with secrets on Pangea Vault",
+	Long: `Run your applications with secrets loaded as environment variables into your application on Pangea Vault.
 	
 	For example:
-		pangea run -c npm run dev
+		pangea run -- npm run dev
 			- will start your node server with secrets loaded in from Pangea`,
 	Run: func(cmd *cobra.Command, args []string) {
-		baseCommand, err := cmd.Flags().GetStringArray("command")
-		if err != nil {
+		if len(args) < 1 {
 			log.Fatal("No specified command")
 		}
 
-		err = exec_subprocess(baseCommand, args)
+		baseCommand := args[0]
+		args = args[1:]
+		err := exec_subprocess(baseCommand, args)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -73,13 +72,13 @@ func Get_env() []string {
 
 	var remoteEnv []string
 
-	defaultProjectPathExists := os.Getenv("PANGEA_DEFAULT_FOLDER")
+	defaultWorkspacePathExists := os.Getenv("PANGEA_DEFAULT_FOLDER")
 
 	isPathExists, config, currentDir := utils.CheckPathExists()
-	if isPathExists || defaultProjectPathExists != "" {
+	if isPathExists || defaultWorkspacePathExists != "" {
 		var folderName string
-		if defaultProjectPathExists != "" {
-			folderName = defaultProjectPathExists
+		if defaultWorkspacePathExists != "" {
+			folderName = defaultWorkspacePathExists
 		} else {
 			folderName = config.Paths[currentDir].Remote
 		}
@@ -132,14 +131,14 @@ func Get_env() []string {
 			remoteEnv = append(remoteEnv, fmt.Sprintf("%s=%s", val, response.Result.CurrentVersion.Secret))
 		}
 	} else {
-		log.Fatal("Folder not found. Please use `pangea select` to choose the project you would like to use secrets from.")
+		log.Fatal("Folder not found. Please use `pangea select` to choose the workspace you would like to use secrets from.")
 	}
 
 	return remoteEnv
 }
 
-func exec_subprocess(baseCommand []string, args []string) error {
-	cmd := exec.Command(baseCommand[0], args...)
+func exec_subprocess(baseCommand string, args []string) error {
+	cmd := exec.Command(baseCommand, args...)
 
 	remoteEnv := Get_env()
 
@@ -173,6 +172,4 @@ func exec_subprocess(baseCommand []string, args []string) error {
 
 func init() {
 	rootCmd.AddCommand(runCmd)
-
-	runCmd.Flags().StringArrayVarP(&command, "command", "c", []string{}, "Command to execute")
 }

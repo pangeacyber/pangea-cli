@@ -1,6 +1,6 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Copyright 2023 Pangea Cyber Corporation
+// Author: Pangea Cyber Corporation
+
 package cmd
 
 import (
@@ -18,8 +18,8 @@ import (
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Connect CLI to Pangea Vault",
-	Long:  `Login to CLI and connect it to Pangae's Vault.`,
+	Short: "Connect Pangea CLI to Pangea Vault",
+	Long:  `Login to Pangea CLI and connect it to Pangae's Vault.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		noBrowser, _ := cmd.Flags().GetBool("no-browser")
 		loginPrompts(noBrowser)
@@ -46,7 +46,7 @@ func openBrowser(url string) error {
 
 func loginPrompts(noBrowserStatus bool) {
 	if !noBrowserStatus {
-		fmt.Println("When you hit enter, we will redirect you to the Pangea Vault page where you will need to copy the Default Pangea Token and paste it in the next prompt. Ready 🏎️?")
+		fmt.Println("When you hit enter, we will redirect you to the Pangea Vault page where you will need to copy the Default Pangea Token and paste it in the next prompt.")
 		fmt.Scanln()
 
 		err := openBrowser("https://console.pangea.cloud/service/vault")
