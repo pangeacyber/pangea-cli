@@ -12,7 +12,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "pangea",
-	Short: "Pangea CLI version 1.0 Beta",
+	Short: "Pangea CLI version 1.1 Beta",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
