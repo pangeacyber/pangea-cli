@@ -44,7 +44,7 @@ Step 1: Install the CLI in your `Dockerfile`. Here's an example for a Node app
 FROM node:lts-bullseye
 
 # Install Pangea CLI
-curl -L -o /bin/pangea "https://github.com/pangeacyber/pangea-cli/releases/latest/download/pangea-$(uname -s)-$(uname -m)"
+RUN curl -L -o /bin/pangea "https://github.com/pangeacyber/pangea-cli/releases/latest/download/pangea-$(uname -s)-$(uname -m)"
 
 WORKDIR /app
 COPY . .
