@@ -87,7 +87,7 @@ jobs:
           prefix: pangea-cli
 
       - name: Upload
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4.3.2
         with:
           name: pangea-cli-${{ matrix.platform }}-${{ matrix.arch }}
           path: ./bin
