@@ -14,7 +14,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print Pangea CLI version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("v1.1 Beta")
+		fmt.Println("v1.1.1 Beta")
 	},
 }
 

@@ -10,30 +10,24 @@ before:
 
 builds:
   - env:
-      - CGO_ENABLED=0
-    
-    main: ./cmd/
-
+      - CGO_ENABLED=0    
+    main: ./
     binary: pangea
-
     goos:
       - linux
       - windows
       - darwin
-
     goarch:
       - amd64
       - arm64
       - 386
-
-    # List of combinations of GOOS + GOARCH + GOARM to ignore.
     ignore:
       - goos: darwin
         goarch: 386
 
-release:
-  extra_files:
-    - glob: ./cosign.pub
+# release:
+#   extra_files:
+#     - glob: ./cosign.pub
 
 archives:
   - format: binary
