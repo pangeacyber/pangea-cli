@@ -90,7 +90,7 @@ winget:
       name: "Pangea Bot"
       email: bot@pangea.cloud
     commit_msg_template: "{{ .PackageIdentifier }}: {{ .Tag }}"
-    path: manifests/p/PangeaCyber/pangea/{{ .Version }}
+    path: manifests/p/pangeacyber/pangea/{{ .Version }}
     homepage: "https://pangea.cloud/"
     copyright: "Pangea Cyber Corporation"
     skip_upload: auto
