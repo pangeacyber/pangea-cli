@@ -79,7 +79,7 @@ brews:
 winget:
   - # Name of the manifest
     name: pangea
-    publisher: "Pangea Cyber"
+    publisher: "PangeaCyber"
     short_description: "Pangea Cyber CLI"
     license: "mit"
     publisher_url: https://pangea.cloud
