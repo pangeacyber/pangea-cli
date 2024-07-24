@@ -67,14 +67,6 @@ brews:
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     directory: Formula
     homepage: "https://pangea.cloud/"
-
-    # Custom install script for brew.
-    #
-    # Template: allowed
-    # Default: 'bin.install "BinaryName"'.
-    install: |
-      (libexec/"scripts").install "dev/install.sh"
-      system "#{libexec}/scripts/install.sh"
     repository:
       owner: pangeacyber
       name: homebrew-cli
