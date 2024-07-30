@@ -142,7 +142,7 @@ func pushEnvToVercel(token, projectID string, envs []string) error {
 
 		if resp.StatusCode != http.StatusOK {
 			b, _ := io.ReadAll(resp.Body)
-			return fmt.Errorf("Failed to push env var %s, received status: %d: %s", key, resp.Status, string(b))
+			return fmt.Errorf("Failed to push env var %s, received status: %d: %s", key, resp.StatusCode, string(b))
 		}
 		logger.Printf("Successfully pushed %s\n", key)
 	}
