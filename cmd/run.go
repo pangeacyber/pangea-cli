@@ -6,7 +6,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 
@@ -56,19 +55,19 @@ var runCmd = &cobra.Command{
 			- will start your node server with secrets loaded in from Pangea`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			log.Fatal("No specified command")
+			logger.Fatal("No specified command")
 		}
 
 		baseCommand := args[0]
 		args = args[1:]
 		err := exec_subprocess(baseCommand, args)
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 	},
 }
 
-func Get_env() []string {
+func GetEnv() []string {
 
 	var remoteEnv []string
 
@@ -83,7 +82,7 @@ func Get_env() []string {
 			folderName = config.Paths[currentDir].Remote
 		}
 
-		fmt.Printf("Fetching secrets from: %s\n", folderName)
+		logger.Printf("Fetching secrets from: %s\n", folderName)
 
 		client, pangeaDomain := utils.CreateVaultAPIClient()
 
@@ -91,16 +90,16 @@ func Get_env() []string {
 			SetBody(fmt.Sprintf(`{"filter": {"folder":"%s"}}`, folderName)).
 			Post(fmt.Sprintf("https://vault.%s/v1/list", pangeaDomain))
 		if err != nil {
-			log.Fatalln(err)
+			logger.Fatalln(err)
 		}
 
 		var response VaultListResponse
 		err = json.Unmarshal(resp.Body(), &response)
 		if err != nil {
-			log.Fatal("Error fetching secrets from Pangea")
+			logger.Fatal("Error fetching secrets from Pangea")
 		}
 		if response.Status == "Unauthorized" {
-			log.Fatal("Unauthorized! Please run `pangea login` to get a new token.")
+			logger.Fatal("Unauthorized! Please run `pangea login` to get a new token.")
 		}
 
 		// Create a list of secret type IDs
@@ -118,20 +117,20 @@ func Get_env() []string {
 				Post(fmt.Sprintf("https://vault.%s/v1/get", pangeaDomain))
 
 			if err != nil {
-				log.Fatal("Error fetching secret ", val)
+				logger.Fatal("Error fetching secret ", val)
 			}
 
 			var response VaultSecretResponse
 			err = json.Unmarshal(resp.Body(), &response)
 
 			if err != nil {
-				log.Fatalf("Error while fetching secrets. %s", err)
+				logger.Fatalf("Error while fetching secrets. %s", err)
 			}
 
 			remoteEnv = append(remoteEnv, fmt.Sprintf("%s=%s", val, response.Result.CurrentVersion.Secret))
 		}
 	} else {
-		log.Fatal("Folder not found. Please use `pangea select` to choose the workspace you would like to use secrets from.")
+		logger.Fatal("Folder not found. Please use `pangea select` to choose the workspace you would like to use secrets from.")
 	}
 
 	return remoteEnv
@@ -140,7 +139,7 @@ func Get_env() []string {
 func exec_subprocess(baseCommand string, args []string) error {
 	cmd := exec.Command(baseCommand, args...)
 
-	remoteEnv := Get_env()
+	remoteEnv := GetEnv()
 
 	env := make([]string, len(os.Environ())+len(remoteEnv))
 	copy(env, os.Environ())
@@ -154,14 +153,14 @@ func exec_subprocess(baseCommand string, args []string) error {
 	// Start the subprocess
 	err := cmd.Start()
 	if err != nil {
-		log.Fatal("Error starting subprocess:", err)
+		logger.Fatal("Error starting subprocess:", err)
 		return err
 	}
 
 	// Wait for the subprocess to finish
 	err = cmd.Wait()
 	if err != nil {
-		log.Fatal("Error waiting for subprocess:", err)
+		logger.Fatal("Error waiting for subprocess:", err)
 		return err
 	}
 

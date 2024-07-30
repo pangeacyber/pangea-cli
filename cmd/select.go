@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/pangeacyber/pangea-cli/utils"
@@ -22,7 +21,7 @@ var selectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		remoteFolderName, err := cmd.Flags().GetString("folder-name")
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 
 		SelectWorkspace(remoteFolderName)
@@ -32,7 +31,7 @@ var selectCmd = &cobra.Command{
 func SelectWorkspace(remoteFolderName string) {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		fmt.Printf("Error getting current directory: %v\n", err)
+		logger.Printf("Error getting current directory: %v\n", err)
 		return
 	}
 
@@ -51,7 +50,7 @@ func SelectWorkspace(remoteFolderName string) {
 
 		saveCacheData(cachePath, config)
 
-		fmt.Printf("Workspace '%s' selected and cached.\n", workspaceName)
+		logger.Printf("Workspace '%s' selected and cached.\n", workspaceName)
 	} else {
 		config.Paths[currentDir] = utils.WorkspaceData{
 			Remote: remoteFolderName,
@@ -59,12 +58,12 @@ func SelectWorkspace(remoteFolderName string) {
 
 		saveCacheData(cachePath, config)
 
-		fmt.Printf("Workspace '%s' selected and cached.\n", remoteFolderName)
+		logger.Printf("Workspace '%s' selected and cached.\n", remoteFolderName)
 	}
 }
 
 func promptUser(promptMessage string) string {
-	fmt.Print(promptMessage)
+	logger.Print(promptMessage)
 	var input string
 	fmt.Scanln(&input)
 	return input
@@ -80,14 +79,14 @@ func saveCacheData(cachePath string, config utils.CacheData) {
 
 	viper.ReadInConfig() //nolint:errcheck
 	// if err != nil {
-	// 	fmt.Printf("Error reading cache file: %v\n", err)
+	// 	logger.Printf("Error reading cache file: %v\n", err)
 	// }
 
 	viper.Set("paths", config.Paths) //nolint:errcheck
 
 	err := viper.WriteConfig()
 	if err != nil {
-		fmt.Printf("Error writing cache file: %v\n", err)
+		logger.Printf("Error writing cache file: %v\n", err)
 	}
 }
 

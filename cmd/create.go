@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/pangeacyber/pangea-cli/utils"
 	"github.com/spf13/cobra"
@@ -18,7 +17,7 @@ var createCmd = &cobra.Command{
 	Short: "Create a pangea secrets workspace",
 	Long:  `Creates a workspace in your pangea vault which let's you store your secrets.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println()
+		logger.Println()
 	},
 }
 
@@ -40,7 +39,7 @@ func validateInput(flags *pflag.FlagSet) error {
 	}
 
 	if workspaceName == "" {
-		fmt.Print("Enter the name of your workspace: ")
+		logger.Print("Enter the name of your workspace: ")
 		_, err := fmt.Scanln(&workspaceName)
 		if err != nil {
 			return err
@@ -53,12 +52,12 @@ func validateInput(flags *pflag.FlagSet) error {
 		Post(fmt.Sprintf("https://vault.%s/v1/folder/create", pangeaDomain))
 
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatalln(err)
 	}
 
 	SelectWorkspace(fmt.Sprintf("/secrets/%s/", workspaceName))
 
-	fmt.Printf("workspace created at %s in Pangea vault\n\nRun `pangea migrate -f .env` to migrate your .env file to your workspace", fmt.Sprintf("/secrets/%s/", workspaceName))
+	logger.Printf("workspace created at %s in Pangea vault\n\nRun `pangea migrate -f .env` to migrate your .env file to your workspace", fmt.Sprintf("/secrets/%s/", workspaceName))
 
 	return nil
 }

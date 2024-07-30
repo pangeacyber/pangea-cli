@@ -4,8 +4,6 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -21,16 +19,16 @@ var lsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		show, err := cmd.Flags().GetBool("show-secrets")
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 
-		remoteEnv := Get_env()
+		remoteEnv := GetEnv()
 
 		for _, envVar := range remoteEnv {
 			if !show {
 				envVar = strings.Split(envVar, "=")[0] + "=********"
 			}
-			fmt.Println(envVar)
+			logger.Println(envVar)
 		}
 	},
 }
