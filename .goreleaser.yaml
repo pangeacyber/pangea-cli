@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0    
+    main: ./
+    binary: pangea
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
+    ignore:
+      - goos: darwin
+        goarch: 386
+
+# release:
+#   extra_files:
+#     - glob: ./cosign.pub
+
+archives:
+  - format: binary
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: pangea-{{ .Os }}-{{ .Arch }}
+    # files:
+    #   - LICENSE
+    #   - README.md
+    #   - CHANGELOG.md
+    #   - install.sh
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+# signs:
+#   - cmd: cosign
+#     stdin: "{{ .Env.COSIGN_PWD }}"
+#     args:
+#       - "sign-blob"
+#       - "--key=cosign.key"
+#       - "--output-signature=${signature}"
+#       - "${artifact}"
+#       - "--yes" # needed on cosign 2.0.0+
+#     artifacts: all
+
+brews:
+  -
+    name: pangea
+    download_strategy: CurlDownloadStrategy
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    directory: Formula
+    homepage: "https://pangea.cloud/"
+    repository:
+      owner: pangeacyber
+      name: homebrew-cli
+      branch: release-{{ .Tag }}
+      pull_request:
+        enabled: true
+        base:
+          branch: main
+
+winget:
+  - # Name of the manifest
+    name: pangea
+    publisher: "PangeaCyber"
+    short_description: "Pangea Cyber CLI"
+    license: "mit"
+    publisher_url: https://pangea.cloud
+    publisher_support_url: "https://github.com/pangeacyber/pangea-cli/issues/new"
+    package_identifier: pangeacyber.pangea
+    url_template: "https://github.com/pangeacyber/pangea-cli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    commit_author:
+      name: "Pangea Bot"
+      email: bot@pangea.cloud
+    commit_msg_template: "{{ .PackageIdentifier }}: {{ .Tag }}"
+    path: manifests/p/pangeacyber/pangea/{{ .Version }}
+    homepage: "https://pangea.cloud/"
+    copyright: "Pangea Cyber Corporation"
+    skip_upload: auto
+    release_notes: "{{.Changelog}}"
+    repository:
+      owner: pangeacyber
+      name: winget-pkgs
+      branch: pangea-cli-{{ .Tag }}
+      # pull_request:
+      #   enabled: true
+      #   draft: true
+      #   base:
+      #     owner: microsoft
+      #     name: winget-pkgs
+      #     branch: master
