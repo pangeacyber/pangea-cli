@@ -5,8 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
 	"github.com/pangeacyber/pangea-cli/utils"
@@ -29,14 +27,12 @@ var migrateCmd = &cobra.Command{
 		if isPathExists {
 			folderName = config.Paths[currentDir].Remote
 		} else {
-			fmt.Println("Pangea workspace is not setup. Run `pange select` to select your workspace.")
-			// Error exit
-			os.Exit(0)
+			logger.Fatalln("Pangea workspace is not setup. Run `pangea select` to select your workspace.")
 		}
 
 		envFilePath, err := cmd.Flags().GetString("file")
 		if err != nil {
-			log.Fatalln(err)
+			logger.Fatalln(err)
 		}
 
 		// TODO: Share viper instance across app
@@ -50,39 +46,36 @@ var migrateCmd = &cobra.Command{
 
 		// Read the .env file
 		if err := userConfigViper.ReadInConfig(); err != nil {
-			fmt.Printf("Error reading .env file: %s\n", err)
-			os.Exit(1)
+			logger.Fatalf("Error reading .env file: %s\n", err)
 		}
 
 		client, pangeaDomain := utils.CreateVaultAPIClient()
 
-		fmt.Println("Migrating Secrets 🪄...")
+		logger.Println("Migrating Secrets 🪄...")
 
 		// Loop through variables from the .env file
 		settings := userConfigViper.AllSettings()
 		for key, value := range settings {
-			fmt.Println(strings.ToUpper(key))
+			logger.Println(strings.ToUpper(key))
 			resp, err := client.R().
 				SetBody(fmt.Sprintf(`{"name":"%s", "secret":"%s", "folder":"%s"}`, strings.ToUpper(key), value, folderName)).
 				Post(fmt.Sprintf("https://vault.%s/v1/secret/store", pangeaDomain))
 			if err != nil {
-				log.Fatal(err)
+				logger.Fatal(err)
 			}
 
 			if resp.IsError() {
 				if resp.StatusCode() == 400 {
 					err = fmt.Errorf("Error: Secret %s already exists in your workspace at %s.\nPlease go to your workspace at https://console.pangea.cloud/service/vault/data to rotate (update) it.", strings.ToUpper(key), folderName)
-					fmt.Println(err)
-					// Error exit
-					os.Exit(1)
+					logger.Fatalln(err)
 				} else {
-					log.Fatal("Error migrating secrets to your vault. More info:\n", resp.Status())
+					logger.Fatal("Error migrating secrets to your vault. More info:\n", resp.Status())
 				}
 			}
 		}
 
-		fmt.Printf("Success! All secrets have been migrated to %s in your secure Pangea Vault\n", folderName)
-		fmt.Println("You can now delete your env file and run `pangea run -c $APP_COMMAND`")
+		logger.Printf("Success! All secrets have been migrated to %s in your secure Pangea Vault\n", folderName)
+		logger.Println("You can now delete your env file and run `pangea run -c $APP_COMMAND`")
 	},
 }
 

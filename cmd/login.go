@@ -6,7 +6,6 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"runtime"
@@ -46,28 +45,28 @@ func openBrowser(url string) error {
 
 func loginPrompts(noBrowserStatus bool) {
 	if !noBrowserStatus {
-		fmt.Println("When you hit enter, we will redirect you to the Pangea Vault page where you will need to copy the Default Pangea Token and paste it in the next prompt.")
+		logger.Println("When you hit enter, we will redirect you to the Pangea Vault page where you will need to copy the Default Pangea Token and paste it in the next prompt.")
 		fmt.Scanln()
 
 		err := openBrowser("https://console.pangea.cloud/service/vault")
 		if err != nil {
 			// TODO: Handle error if browser doesn't work
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 	} else {
-		fmt.Println("Visit https://console.pangea.cloud/service/vault to grab your Default Pangea Token and paste it below.")
+		logger.Println("Visit https://console.pangea.cloud/service/vault to grab your Default Pangea Token and paste it below.")
 	}
 
-	fmt.Print("Enter Pangea Token: ")
+	logger.Print("Enter Pangea Token: ")
 	// TODO: Check if Pangea token is valid
 	token := readInput()
 
-	fmt.Print("Enter Pangea Domain: ")
+	logger.Print("Enter Pangea Domain: ")
 	domain := readInput()
 
 	err := utils.WriteTokenToFile(token, domain)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 }
