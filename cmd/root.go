@@ -4,10 +4,14 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 )
+
+// Logger that omits timestamp and still allows us to log fatal
+var logger = log.New(os.Stderr, "", 0)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
