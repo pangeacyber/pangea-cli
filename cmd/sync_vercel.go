@@ -48,7 +48,7 @@ func init() {
 	syncCmd.AddCommand(vercelCmd)
 	vercelCmd.Flags().StringVarP(&vercelToken, "token", "t", "", "Vercel API token")
 	vercelCmd.Flags().StringVarP(&vercelProjectId, "project", "p", "", "Vercel project ID")
-	vercelCmd.Flags().StringVarP(&vercelTarget, "target", "x", "", "Comma separated list of vercel environments to push to, defaults to 'development'")
+	vercelCmd.Flags().StringVarP(&vercelTarget, "target", "x", "development", "Comma separated list of vercel environments to push to, defaults to 'development'")
 	vercelCmd.Flags().StringVarP(&vercelGitBranch, "branch", "b", "", "Which git branch to allow access to this variable, target must be set to 'preview'.")
 }
 
