@@ -7,7 +7,7 @@ The easiest way to scrap .env files and store your API keys securely on [Pangea]
 ### Installation
 For linux / macOS systems
 ```bash
-brew install pangeacyber/cli/pangea
+curl -L -o /usr/local/bin/pangea "https://github.com/pangeacyber/pangea-cli/releases/latest/download/pangea-$(uname -s)-$(uname -m)" && chmod +x /usr/local/bin/pangea
 ```
 
 ### Login to Pangea
@@ -33,8 +33,8 @@ pangea migrate -f .env
 
 ### Run with secrets from Pangea
 ```bash
-pangea run -- <APP_COMMAND>
-# Example - pangea run -- npm run dev
+pangea run -c <APP_COMMAND>
+# Example - pangea run -c npm run dev
 ```
 
 ## Usage

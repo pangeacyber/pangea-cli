@@ -7,6 +7,7 @@ before:
   hooks:
     - go mod tidy
     - go generate ./...
+    - ./scripts/completions.sh
 
 builds:
   - env:
@@ -25,19 +26,21 @@ builds:
       - goos: darwin
         goarch: 386
 
-# release:
-#   extra_files:
-#     - glob: ./cosign.pub
+release:
+  extra_files:
+    - glob: ./dev/download-and-install.sh
 
 archives:
-  - format: binary
-    # this name template makes the OS and Arch compatible with the results of `uname`.
-    name_template: pangea-{{ .Os }}-{{ .Arch }}
-    # files:
-    #   - LICENSE
-    #   - README.md
-    #   - CHANGELOG.md
-    #   - install.sh
+-
+  name_template: pangea-{{ .Os }}-{{ .Arch }}
+  format_overrides:
+    - goos: windows
+      format: zip
+  files:
+    - README.md
+    - LICENSE
+    - install.sh
+    - completions/*
 
 changelog:
   sort: asc
@@ -75,6 +78,13 @@ brews:
         enabled: true
         base:
           branch: main
+    install: |-
+      bin.install "pangea"
+      bash_completion.install "completions/pangea.bash" => "pangea"
+      zsh_completion.install "completions/pangea.zsh" => "_pangea"
+      fish_completion.install "completions/pangea.fish"
+    test: |
+      system "#{bin}/pangea --version"
 
 winget:
   - # Name of the manifest
