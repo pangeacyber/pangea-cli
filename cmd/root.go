@@ -16,7 +16,7 @@ var logger = log.New(os.Stderr, "", 0)
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "pangea",
-	Short: "Pangea CLI version 1.1 Beta",
+	Short: "Pangea CLI version " + Version,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
