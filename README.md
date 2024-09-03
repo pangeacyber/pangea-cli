@@ -4,11 +4,34 @@ The easiest way to scrap .env files and store your API keys securely on [Pangea]
 
 ## Get Started
 [Video Walkthrough on Getting Started](https://www.youtube.com/watch?v=R_LSoDcXj9Y)
+
 ### Installation
-For linux / macOS systems
+
+#### Using `brew` run:
 ```bash
-curl -L -o /usr/local/bin/pangea "https://github.com/pangeacyber/pangea-cli/releases/latest/download/pangea-$(uname -s)-$(uname -m)" && chmod +x /usr/local/bin/pangea
+brew install pangeacyber/cli/pangea
 ```
+
+#### For linux / macOS systems
+
+using `curl`
+```bash
+source <(curl -L https://github.com/pangeacyber/pangea-cli/releases/latest/download/download-and-install.sh)
+```
+
+or using `wget`
+```bash
+bash <(wget -qO- https://github.com/pangeacyber/pangea-cli/releases/latest/download/download-and-install.sh)
+```
+
+#### For Windows systems
+
+Using `winget`, run:
+```bash
+winget install pangeacyber.pangea
+```
+
+
 
 ### Login to Pangea
 ```bash
@@ -33,8 +56,8 @@ pangea migrate -f .env
 
 ### Run with secrets from Pangea
 ```bash
-pangea run -c <APP_COMMAND>
-# Example - pangea run -c npm run dev
+pangea run -- <APP_COMMAND>
+# Example - pangea run -- npm run dev
 ```
 
 ## Usage
@@ -63,4 +86,27 @@ docker run \
     -e PANGEA_DOMAIN=aws.us.pangea.cloud \
     -e PANGEA_DEFAULT_FOLDER=/secrets/... \
     <IMAGE_NAME>
+```
+
+
+## Troubleshooting
+
+### Completion
+
+If completion is not working on MacOS using `zsh`, you could try adding this next lines to your `~/.zshrc` file
+
+```
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+```
+
+and then restart the terminal running: 
+
+```sh
+exec $SHELL
 ```
