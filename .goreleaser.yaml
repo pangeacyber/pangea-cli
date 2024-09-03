@@ -26,9 +26,9 @@ builds:
       - goos: darwin
         goarch: 386
 
-# release:
-#   extra_files:
-#     - glob: ./cosign.pub
+release:
+  extra_files:
+    - glob: ./dev/download-and-install.sh
 
 archives:
 -
