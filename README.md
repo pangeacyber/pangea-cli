@@ -7,10 +7,31 @@ The easiest way to scrap .env files and store your API keys securely on [Pangea]
 
 ### Installation
 
-For linux / macOS systems
+#### Using `brew` run:
 ```bash
 brew install pangeacyber/cli/pangea
 ```
+
+#### For linux / macOS systems
+
+using `curl`
+```bash
+source <(curl -L https://github.com/pangeacyber/pangea-cli/releases/latest/download/download-and-install.sh)
+```
+
+or using `wget`
+```bash
+bash <(wget -qO- https://github.com/pangeacyber/pangea-cli/releases/latest/download/download-and-install.sh)
+```
+
+#### For Windows systems
+
+Using `winget`, run:
+```bash
+winget install pangeacyber.pangea
+```
+
+
 
 ### Login to Pangea
 ```bash
