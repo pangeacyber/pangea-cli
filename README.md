@@ -66,3 +66,26 @@ docker run \
     -e PANGEA_DEFAULT_FOLDER=/secrets/... \
     <IMAGE_NAME>
 ```
+
+
+## Troubleshooting
+
+### Completion
+
+If completion is not working on MacOS using `zsh`, you could try adding this next lines to your `~/.zshrc` file
+
+```
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+```
+
+and then restart the terminal running: 
+
+```sh
+exec $SHELL
+```
