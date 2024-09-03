@@ -1,6 +1,7 @@
 # Pangea Secrets CLI
 
 The easiest way to scrap .env files and store your API keys securely on [Pangea](https://pangea.cloud?utm_source=github&utm_medium=pangea-cli-repo).
+Something I'll delete
 
 ## Get Started
 [Video Walkthrough on Getting Started](https://www.youtube.com/watch?v=R_LSoDcXj9Y)
