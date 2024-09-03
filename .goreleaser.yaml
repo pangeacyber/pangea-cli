@@ -39,6 +39,7 @@ archives:
   files:
     - README.md
     - LICENSE
+    - install.sh
     - completions/*
 
 changelog:
