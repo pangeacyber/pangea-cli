@@ -31,7 +31,7 @@ builds:
 #     - glob: ./cosign.pub
 
 archives:
-  -
+-
   name_template: pangea-{{ .Os }}-{{ .Arch }}
   format_overrides:
     - goos: windows
