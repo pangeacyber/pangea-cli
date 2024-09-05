@@ -80,7 +80,7 @@ var migrateCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(migrateCmd)
+	RootCmd.AddCommand(migrateCmd)
 
 	migrateCmd.Flags().StringP("file", "f", ".env", "env file path (Ex. .env, .env.local)")
 

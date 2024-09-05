@@ -170,5 +170,5 @@ func exec_subprocess(baseCommand string, args []string) error {
 }
 
 func init() {
-	rootCmd.AddCommand(runCmd)
+	RootCmd.AddCommand(runCmd)
 }

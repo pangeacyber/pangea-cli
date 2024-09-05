@@ -79,7 +79,7 @@ func readInput() string {
 }
 
 func init() {
-	rootCmd.AddCommand(loginCmd)
+	RootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().Bool("no-browser", false, "Login without the browser")
 	// Here you will define your flags and configuration settings.
 

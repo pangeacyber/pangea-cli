@@ -91,7 +91,6 @@ func saveCacheData(cachePath string, config utils.CacheData) {
 }
 
 func init() {
-	rootCmd.AddCommand(selectCmd)
-
+	RootCmd.AddCommand(selectCmd)
 	selectCmd.Flags().StringP("folder-name", "f", "", "folder name on Pangea vault (Example - /secrets/<workspace_name>/dev)")
 }

@@ -1,8 +1,8 @@
 BINARY_NAME=pangea
 
-all: clean build
+all: clean build-all
 
-build:
+build-all:
 	mkdir -p bin/
 	GOARCH=amd64 GOOS=darwin go build -o bin/${BINARY_NAME}-darwin-x86_64
 	GOARCH=amd64 GOOS=linux go build -o bin/${BINARY_NAME}-linux-x86_64
@@ -10,6 +10,9 @@ build:
 	GOARCH=arm64 GOOS=darwin go build -o bin/${BINARY_NAME}-darwin-arm64
 	GOARCH=arm64 GOOS=linux go build -o bin/${BINARY_NAME}-linux-arm64
 	GOARCH=arm64 GOOS=windows go build -o bin/${BINARY_NAME}-windows-arm.exe
+
+build:
+	go build -o ${BINARY_NAME}
 
 run: build
 	./${BINARY_NAME}

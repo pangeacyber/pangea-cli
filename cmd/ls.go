@@ -34,7 +34,7 @@ var lsCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(lsCmd)
+	RootCmd.AddCommand(lsCmd)
 
 	lsCmd.Flags().BoolP("show-secrets", "s", false, "Show the secret values")
 

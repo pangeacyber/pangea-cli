@@ -9,5 +9,5 @@ var syncCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(syncCmd)
+	RootCmd.AddCommand(syncCmd)
 }
