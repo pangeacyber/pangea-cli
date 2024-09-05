@@ -26,7 +26,7 @@ func CheckAvailableVersion() (*selfupdate.Release, bool, error) {
 	}
 
 	if !availablePrinted {
-		fmt.Fprintln(os.Stdout, "New version available:", latest.Version)
+		fmt.Fprintln(os.Stderr, "New version available:", latest.Version)
 		availablePrinted = true
 	}
 
