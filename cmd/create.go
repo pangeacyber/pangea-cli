@@ -22,7 +22,7 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(createCmd)
+	RootCmd.AddCommand(createCmd)
 
 	createCmd.Flags().StringP("workspace-name", "n", "", "workspace Name (used as folder name)")
 

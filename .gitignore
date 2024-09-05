@@ -1,3 +1,4 @@
 bin/*
 installer/
 *.tar.gz
+pangea
