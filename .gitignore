@@ -1,3 +1,10 @@
+.cache/
+pangea_sdk_log.json
+pangea
+.vscode/launch.json
 bin/*
-installer/
-*.tar.gz
+.env
+
+dist/
+.env1
+.env2
