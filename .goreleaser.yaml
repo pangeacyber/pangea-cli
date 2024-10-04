@@ -7,12 +7,12 @@ before:
   hooks:
     - go mod tidy
     - go generate ./...
-    - ./scripts/completions.sh
+    - ./dev/completions.sh
 
 builds:
   - env:
-      - CGO_ENABLED=0    
-    main: ./
+      - CGO_ENABLED=0
+    main: ./cmd/
     binary: pangea
     goos:
       - linux
@@ -41,6 +41,7 @@ archives:
     - LICENSE
     - install.sh
     - completions/*
+    - CHANGELOG.md
 
 changelog:
   sort: asc
@@ -48,17 +49,6 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
-# signs:
-#   - cmd: cosign
-#     stdin: "{{ .Env.COSIGN_PWD }}"
-#     args:
-#       - "sign-blob"
-#       - "--key=cosign.key"
-#       - "--output-signature=${signature}"
-#       - "${artifact}"
-#       - "--yes" # needed on cosign 2.0.0+
-#     artifacts: all
 
 brews:
   -
@@ -70,6 +60,13 @@ brews:
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     directory: Formula
     homepage: "https://pangea.cloud/"
+    install: |-
+      bin.install "pangea"
+      bash_completion.install "completions/pangea.bash" => "pangea"
+      zsh_completion.install "completions/pangea.zsh" => "_pangea"
+      fish_completion.install "completions/pangea.fish"
+    test: |
+      system "#{bin}/pangea --version"
     repository:
       owner: pangeacyber
       name: homebrew-cli
@@ -78,16 +75,9 @@ brews:
         enabled: true
         base:
           branch: main
-    install: |-
-      bin.install "pangea"
-      bash_completion.install "completions/pangea.bash" => "pangea"
-      zsh_completion.install "completions/pangea.zsh" => "_pangea"
-      fish_completion.install "completions/pangea.fish"
-    test: |
-      system "#{bin}/pangea --version"
 
 winget:
-  - # Name of the manifest
+  -
     name: pangea
     publisher: "PangeaCyber"
     short_description: "Pangea Cyber CLI"
@@ -109,10 +99,10 @@ winget:
       owner: pangeacyber
       name: winget-pkgs
       branch: pangea-cli-{{ .Tag }}
-      # pull_request:
-      #   enabled: true
-      #   draft: true
-      #   base:
-      #     owner: microsoft
-      #     name: winget-pkgs
-      #     branch: master
+      pull_request:
+        enabled: true
+        draft: true
+        base:
+          owner: microsoft
+          name: winget-pkgs
+          branch: master

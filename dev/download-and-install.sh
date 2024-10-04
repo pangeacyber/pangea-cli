@@ -2,7 +2,9 @@
 
 # Define variables
 FILE_NAME=$(echo "pangea-$(uname -s)-$(uname -m).tar.gz" | tr '[:upper:]' '[:lower:]')  # lowercase name
-REPO=pangeacyber/pangea-cli
+SIGNATURE_FILENAME=$FILE_NAME.sig
+PUBLIC_KEY_FILENAME=cosign.pub
+REPO=pangeacyber/pangea-cli-internal
 
 # Download the file
 download_file() {
@@ -20,6 +22,21 @@ download_file() {
 }
 
 download_file $FILE_NAME
+
+if command -v cosign &> /dev/null; then
+  echo "Verify signature..."
+  download_file $PUBLIC_KEY_FILENAME
+  download_file $SIGNATURE_FILENAME
+  cosign verify-blob --key $PUBLIC_KEY_FILENAME -signature $SIGNATURE_FILENAME $FILE_NAME
+
+  # Check the exit code of the cosign command
+  if [ $? -ne 0 ]; then
+    echo "Error: cosign signature verification failed for $FILE_NAME."
+    exit 1
+  fi
+else
+  echo "cosign is not installed. Signature verification skipped. Please install cosign to verify package signature."
+fi
 
 # Make dir and uncompress
 mkdir -p installer && tar -xzvf $FILE_NAME -C installer
