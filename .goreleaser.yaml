@@ -99,10 +99,10 @@ winget:
       owner: pangeacyber
       name: winget-pkgs
       branch: pangea-cli-{{ .Tag }}
-      pull_request:
-        enabled: true
-        draft: true
-        base:
-          owner: microsoft
-          name: winget-pkgs
-          branch: master
+      # pull_request:
+      #   enabled: true
+      #   draft: true
+      #   base:
+      #     owner: microsoft
+      #     name: winget-pkgs
+      #     branch: master
