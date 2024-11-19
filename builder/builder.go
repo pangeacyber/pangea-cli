@@ -12,8 +12,8 @@ import (
 	"unicode"
 
 	pe "github.com/huantt/plaintext-extractor"
-	"github.com/pangeacyber/pangea-cli-internal/cli"
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
 	pangea "github.com/pangeacyber/pangea-go/pangea-sdk/v3/pangea"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"

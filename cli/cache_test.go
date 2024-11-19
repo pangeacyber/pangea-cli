@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pangeacyber/pangea-cli-internal/cli"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
 	"github.com/stretchr/testify/assert"
 )
 

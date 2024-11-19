@@ -9,9 +9,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/pangeacyber/pangea-cli-internal/builder"
-	"github.com/pangeacyber/pangea-cli-internal/cli"
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/builder"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

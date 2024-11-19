@@ -10,7 +10,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/pangeacyber/pangea-cli-internal/plugins/utils"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/utils"
 	"github.com/spf13/cobra"
 )
 

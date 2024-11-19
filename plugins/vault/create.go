@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
 	sv "github.com/pangeacyber/pangea-go/pangea-sdk/v3/service/vault"
 	"github.com/spf13/cobra"
 )

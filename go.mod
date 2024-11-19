@@ -1,4 +1,4 @@
-module github.com/pangeacyber/pangea-cli-internal
+module github.com/pangeacyber/pangea-cli/v2
 
 go 1.21
 

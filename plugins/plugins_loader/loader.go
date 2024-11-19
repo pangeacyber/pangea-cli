@@ -1,13 +1,13 @@
 package loader
 
 import (
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/intel"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/profile"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/sync"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/updates"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/utils"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/vault"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/intel"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/profile"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/sync"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/updates"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/utils"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/vault"
 )
 
 func LoadPlugins() []plugins.Plugin {

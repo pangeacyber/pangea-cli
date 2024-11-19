@@ -3,7 +3,7 @@ package profile
 import (
 	"fmt"
 
-	"github.com/pangeacyber/pangea-cli-internal/cli"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
 	"github.com/spf13/cobra"
 )
 

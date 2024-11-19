@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pangeacyber/pangea-cli-internal/cli"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
 	sv "github.com/pangeacyber/pangea-go/pangea-sdk/v3/service/vault"
 )
 

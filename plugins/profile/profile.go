@@ -1,7 +1,7 @@
 package profile
 
 import (
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
 	"github.com/spf13/cobra"
 )
 
