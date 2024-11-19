@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pangeacyber/pangea-cli-internal/cli"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
 )
 
 type FlagAny struct {

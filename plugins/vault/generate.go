@@ -4,9 +4,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/vault/ed25519"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/vault/rsa"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/vault/ed25519"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/vault/rsa"
 	"github.com/spf13/cobra"
 )
 

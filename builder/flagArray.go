@@ -5,7 +5,7 @@ package builder
 import (
 	"encoding/json"
 
-	"github.com/pangeacyber/pangea-cli-internal/cli"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
 )
 
 type FlagArray struct {

@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/pangeacyber/pangea-cli-internal/plugins/vault/common"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/vault/common"
 )
 
 // Generates Ed25519 key pairs

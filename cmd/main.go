@@ -13,11 +13,11 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/pangeacyber/pangea-cli-internal/builder"
-	"github.com/pangeacyber/pangea-cli-internal/cli"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/authentication"
-	loader "github.com/pangeacyber/pangea-cli-internal/plugins/plugins_loader"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/updates"
+	"github.com/pangeacyber/pangea-cli/v2/builder"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/authentication"
+	loader "github.com/pangeacyber/pangea-cli/v2/plugins/plugins_loader"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/updates"
 )
 
 const (

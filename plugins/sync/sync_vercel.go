@@ -9,9 +9,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pangeacyber/pangea-cli-internal/cli"
-	"github.com/pangeacyber/pangea-cli-internal/plugins"
-	"github.com/pangeacyber/pangea-cli-internal/plugins/vault"
+	"github.com/pangeacyber/pangea-cli/v2/cli"
+	"github.com/pangeacyber/pangea-cli/v2/plugins"
+	"github.com/pangeacyber/pangea-cli/v2/plugins/vault"
 	"github.com/spf13/cobra"
 )
 
